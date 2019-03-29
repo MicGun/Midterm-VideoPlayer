@@ -29,10 +29,10 @@ import android.widget.VideoView;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback,
-        MediaPlayer.OnPreparedListener,  VideoControllerView.MediaPlayerControl {
+        MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
 
-    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
-//    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
+    //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
+    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
 
 //    VideoView mVideoView;
 //
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         mSurfaceView = findViewById(R.id.surfaceView);
@@ -72,12 +72,17 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             // for example the width of a layout
             int height = getWindowManager().getDefaultDisplay().getHeight();
             setVideoSize();
+            mFullScreen = false;
             mVideoControllerView.show();
+            mVideoControllerView.updateFullScreen();
             Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            int height = getWindowManager().getDefaultDisplay().getHeight();;
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            int height = getWindowManager().getDefaultDisplay().getHeight();
+            ;
             setVideoSize();
+            mFullScreen = true;
             mVideoControllerView.show(mMediaPlayer.getDuration());
+            mVideoControllerView.updateFullScreen();
             Toast.makeText(this, "portrait height: " + height, Toast.LENGTH_SHORT).show();
         }
     }
@@ -133,9 +138,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         mVideoControllerView.setMediaPlayer(this);
         mVideoControllerView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         mVideoControllerView.show(mMediaPlayer.getDuration());
-        mVideoControllerView.updatePausePlay();
         setVideoSize();
         mMediaPlayer.start();
+        mVideoControllerView.updatePausePlay();
     }
 
     @Override
@@ -199,10 +204,10 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     public boolean isFullScreen() {
 
-        if(mFullScreen){
+        if (mFullScreen) {
             Log.v("FullScreen", "--set icon full screen--");
             return false;
-        }else{
+        } else {
             Log.v("FullScreen", "--set icon small full screen--");
             return true;
         }
@@ -210,10 +215,10 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     @Override
     public boolean isVolumeOn() {
-        if(mVolumeOn){
+        if (mVolumeOn) {
             Log.v("FullScreen", "--set icon full screen--");
             return false;
-        }else{
+        } else {
             Log.v("FullScreen", "--set icon small full screen--");
             return true;
         }
