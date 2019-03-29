@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 //            Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             int height = getWindowManager().getDefaultDisplay().getHeight();
-            ;
             setVideoSize();
             mFullScreen = true;
             mVideoControllerView.show(mMediaPlayer.getDuration());
