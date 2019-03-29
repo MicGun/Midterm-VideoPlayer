@@ -1,7 +1,9 @@
 package com.hugh.videoplayer;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -9,13 +11,19 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.IOException;
@@ -35,18 +43,44 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private SurfaceHolder mSurfaceHolder;
     private VideoControllerView mVideoControllerView;
 
+    private final static int VIDEO_HEIGHT = 1000;
+
+    private boolean mFullScreen = true;
+    private boolean mVolumeOn = true;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         mSurfaceView = findViewById(R.id.surfaceView);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(MainActivity.this);
 
+
         mVideoControllerView = new VideoControllerView(MainActivity.this);
         mVideoControllerView.show();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            // for example the width of a layout
+            int width = 300;
+            int height = getWindowManager().getDefaultDisplay().getHeight();
+            setVideoSize();
+            Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            int height = getWindowManager().getDefaultDisplay().getHeight();;
+            setVideoSize();
+            Toast.makeText(this, "portrait height: " + height, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -165,11 +199,44 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     public boolean isFullScreen() {
 
-        return false;
+        if(mFullScreen){
+            Log.v("FullScreen", "--set icon full screen--");
+            return false;
+        }else{
+            Log.v("FullScreen", "--set icon small full screen--");
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isVolumeOn() {
+        if(mVolumeOn){
+            Log.v("FullScreen", "--set icon full screen--");
+            return false;
+        }else{
+            Log.v("FullScreen", "--set icon small full screen--");
+            return true;
+        }
     }
 
     @Override
     public void toggleFullScreen() {
+
+        Log.v("FullScreen", "-----------------click toggleFullScreen-----------");
+        setVideoSize();
+        setFullScreen(isFullScreen());
+    }
+
+    @Override
+    public void volumeSwitch() {
+
+        if (mVolumeOn) {
+            mMediaPlayer.setVolume(0, 0);
+            mVolumeOn = false;
+        } else {
+            mMediaPlayer.setVolume(1, 1);
+            mVolumeOn = true;
+        }
 
     }
 
@@ -191,16 +258,75 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
         float screenProportion = (float) screenWidth / (float) screenHeight;
 
-        // Get the SurfaceView layout parameters
         android.view.ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
-        if (videoProportion > screenProportion) {
-            lp.width = screenWidth;
-            lp.height = (int) ((float) screenWidth / videoProportion);
+
+        // Get the SurfaceView layout parameters
+        if (videoProportion > 1) {
+            if (videoProportion > screenProportion) {
+                lp.width = screenWidth;
+                lp.height = (int) ((float) screenWidth / videoProportion);
+            } else {
+                lp.width = (int) (videoProportion * (float) screenHeight);
+                lp.height = screenHeight;
+            }
         } else {
-            lp.width = (int) (videoProportion * (float) screenHeight);
-            lp.height = screenHeight;
+            if (screenProportion < 1) {
+                lp.height = screenWidth;
+                lp.width = (int) (videoProportion * (float) screenWidth);
+            } else {
+                lp.height = screenHeight;
+                lp.width = (int) (videoProportion * (float) screenHeight);
+            }
         }
+
+
         // Commit the layout parameters
         mSurfaceView.setLayoutParams(lp);
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        fullScreen = false;
+
+        // // Get the dimensions of the video
+        int videoWidth = mMediaPlayer.getVideoWidth();
+        int videoHeight = mMediaPlayer.getVideoHeight();
+        float videoProportion = (float) videoWidth / (float) videoHeight;
+
+        // Get the width of the screen
+        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+        float screenProportion = (float) screenWidth / (float) screenHeight;
+
+        if (mFullScreen) {
+            Log.v("FullScreen", "-----------Set full screen SCREEN_ORIENTATION_LANDSCAPE------------");
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            int height = displaymetrics.heightPixels;
+            int width = displaymetrics.widthPixels;
+            android.widget.FrameLayout.LayoutParams params = (android.widget.FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            mSurfaceView.setLayoutParams(params);
+//            params.setMargins(0, 0, 0, 0);
+            //set icon is full screen
+            mFullScreen = fullScreen;
+        } else {
+            Log.v("FullScreen", "-----------Set small screen SCREEN_ORIENTATION_PORTRAIT------------");
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            final FrameLayout mFrame = (FrameLayout) findViewById(R.id.videoSurfaceContainer);
+            // int height = displaymetrics.heightPixels;
+            int height = mFrame.getHeight();//get height Frame Container video
+            int width = displaymetrics.widthPixels;
+            android.widget.FrameLayout.LayoutParams params = (android.widget.FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            mSurfaceView.setLayoutParams(params);
+//            params.setMargins(0, 0, 0, 0);
+            //set icon is small screen
+            mFullScreen = !fullScreen;
+        }
     }
 }

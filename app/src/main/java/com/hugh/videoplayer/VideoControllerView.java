@@ -79,6 +79,7 @@ public class VideoControllerView extends FrameLayout {
     private ImageView         mNextButton;
     private ImageView         mPrevButton;
     private ImageView         mFullscreenButton;
+    private ImageView         mVoluneButton;
     private Handler             mHandler = new MessageHandler(this);
 
     public VideoControllerView(Context context, AttributeSet attrs) {
@@ -116,6 +117,7 @@ public class VideoControllerView extends FrameLayout {
         mPlayer = player;
         updatePausePlay();
         updateFullScreen();
+        updateVolumeSwitch();
     }
 
     /**
@@ -162,6 +164,12 @@ public class VideoControllerView extends FrameLayout {
         if (mFullscreenButton != null) {
             mFullscreenButton.requestFocus();
             mFullscreenButton.setOnClickListener(mFullscreenListener);
+        }
+
+        mVoluneButton = (ImageView) v.findViewById(R.id.volumeButton);
+        if (mVoluneButton != null) {
+            mVoluneButton.requestFocus();
+            mVoluneButton.setOnClickListener(mVoluneButtonListener);
         }
 
         mFfwdButton = (ImageView) v.findViewById(R.id.ffwd);
@@ -267,6 +275,7 @@ public class VideoControllerView extends FrameLayout {
         }
         updatePausePlay();
         updateFullScreen();
+        updateVolumeSwitch();
 
         // cause the progress bar to be updated even if mShowing
         // was already true.  This happens, for example, if we're
@@ -418,6 +427,12 @@ public class VideoControllerView extends FrameLayout {
         }
     };
 
+    private View.OnClickListener mVoluneButtonListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            doVolumeSwitch();
+        }
+    };
+
     public void updatePausePlay() {
         if (mRoot == null || mPauseButton == null || mPlayer == null) {
             return;
@@ -443,6 +458,21 @@ public class VideoControllerView extends FrameLayout {
         }
     }
 
+    public void updateVolumeSwitch() {
+
+        if (mRoot == null || mFullscreenButton == null || mPlayer == null) {
+            return;
+        }
+
+        if (mPlayer.isVolumeOn()) {
+            mVoluneButton.setImageResource(R.drawable.ic_volume_unmute_black_24dp);
+        }
+        else {
+            mVoluneButton.setImageResource(R.drawable.ic_volume_off_black_24dp);
+        }
+
+    }
+
     private void doPauseResume() {
         if (mPlayer == null) {
             return;
@@ -462,6 +492,17 @@ public class VideoControllerView extends FrameLayout {
         }
 
         mPlayer.toggleFullScreen();
+    }
+
+    private void doVolumeSwitch() {
+
+        if (mPlayer == null) {
+            return;
+        }
+
+        mPlayer.volumeSwitch();
+        updateVolumeSwitch();
+
     }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:
@@ -627,7 +668,9 @@ public class VideoControllerView extends FrameLayout {
         boolean canSeekBackward();
         boolean canSeekForward();
         boolean isFullScreen();
+        boolean isVolumeOn();
         void    toggleFullScreen();
+        void    volumeSwitch();
     }
 
     private static class MessageHandler extends Handler {

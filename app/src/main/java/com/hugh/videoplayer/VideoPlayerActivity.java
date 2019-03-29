@@ -108,7 +108,17 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
 
     @Override
+    public boolean isVolumeOn() {
+        return false;
+    }
+
+    @Override
     public void toggleFullScreen() {
+
+    }
+
+    @Override
+    public void volumeSwitch() {
 
     }
 
