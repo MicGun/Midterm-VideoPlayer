@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             mFullScreen = false;
             mVideoControllerView.show();
             mVideoControllerView.updateFullScreen();
-            Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             int height = getWindowManager().getDefaultDisplay().getHeight();
             ;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             mFullScreen = true;
             mVideoControllerView.show(mMediaPlayer.getDuration());
             mVideoControllerView.updateFullScreen();
-            Toast.makeText(this, "portrait height: " + height, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "portrait height: " + height, Toast.LENGTH_SHORT).show();
         }
     }
 
