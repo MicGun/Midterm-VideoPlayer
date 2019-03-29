@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             mFullScreen = fullScreen;
         } else {
             Log.v("FullScreen", "-----------Set small screen SCREEN_ORIENTATION_PORTRAIT------------");
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             DisplayMetrics displaymetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             final FrameLayout mFrame = (FrameLayout) findViewById(R.id.videoSurfaceContainer);
