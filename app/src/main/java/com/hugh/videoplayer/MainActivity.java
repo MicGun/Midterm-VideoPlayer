@@ -31,14 +31,15 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback,
         MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
 
-    //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
-    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
+        private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
+//    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
 
 //    VideoView mVideoView;
 //
 //    Button mButton;
 
     private SurfaceView mSurfaceView;
+    private View mBackgroundView;
     private MediaPlayer mMediaPlayer;
     private SurfaceHolder mSurfaceHolder;
     private VideoControllerView mVideoControllerView;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         setContentView(R.layout.activity_main);
 
         mSurfaceView = findViewById(R.id.surfaceView);
+        mBackgroundView = findViewById(R.id.backgroundView);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(MainActivity.this);
 
@@ -264,28 +266,38 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         float screenProportion = (float) screenWidth / (float) screenHeight;
 
         android.view.ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
+        android.view.ViewGroup.LayoutParams bgSize = mBackgroundView.getLayoutParams();
 
         // Get the SurfaceView layout parameters
         if (videoProportion > 1) {
             if (videoProportion > screenProportion) {
                 lp.width = screenWidth;
                 lp.height = (int) ((float) screenWidth / videoProportion);
+                bgSize.width = screenWidth;
+                bgSize.height = (int) ((float) screenWidth / videoProportion);
             } else {
                 lp.width = (int) (videoProportion * (float) screenHeight);
                 lp.height = screenHeight;
+                bgSize.width = (int) (videoProportion * (float) screenHeight);
+                bgSize.height = screenHeight;
             }
         } else {
             if (screenProportion < 1) {
                 lp.height = screenWidth;
                 lp.width = (int) (videoProportion * (float) screenWidth);
+                bgSize.width = screenWidth;
+                bgSize.height = screenWidth;
             } else {
                 lp.height = screenHeight;
                 lp.width = (int) (videoProportion * (float) screenHeight);
+                bgSize.width = screenWidth;
+                bgSize.height = screenHeight;
             }
         }
 
 
         // Commit the layout parameters
+        mBackgroundView.setLayoutParams(bgSize);
         mSurfaceView.setLayoutParams(lp);
     }
 
