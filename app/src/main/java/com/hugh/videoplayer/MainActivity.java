@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private SurfaceHolder mSurfaceHolder;
     private VideoControllerView mVideoControllerView;
 
-    private final static int VIDEO_HEIGHT = 1000;
-
     private boolean mFullScreen = true;
     private boolean mVolumeOn = true;
 
@@ -72,13 +70,14 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
             // for example the width of a layout
-            int width = 300;
             int height = getWindowManager().getDefaultDisplay().getHeight();
             setVideoSize();
+            mVideoControllerView.show();
             Toast.makeText(this, "landscape height: " + height, Toast.LENGTH_SHORT).show();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
             int height = getWindowManager().getDefaultDisplay().getHeight();;
             setVideoSize();
+            mVideoControllerView.show(mMediaPlayer.getDuration());
             Toast.makeText(this, "portrait height: " + height, Toast.LENGTH_SHORT).show();
         }
     }
@@ -133,7 +132,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
         mVideoControllerView.setMediaPlayer(this);
         mVideoControllerView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-        mVideoControllerView.show();
+        mVideoControllerView.show(mMediaPlayer.getDuration());
+        mVideoControllerView.updatePausePlay();
         setVideoSize();
         mMediaPlayer.start();
     }
@@ -308,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             params.width = width;
             params.height = height;
             mSurfaceView.setLayoutParams(params);
+            mVideoControllerView.show();
 //            params.setMargins(0, 0, 0, 0);
             //set icon is full screen
             mFullScreen = fullScreen;
@@ -324,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             params.width = width;
             params.height = height;
             mSurfaceView.setLayoutParams(params);
+            mVideoControllerView.show(mMediaPlayer.getDuration());
 //            params.setMargins(0, 0, 0, 0);
             //set icon is small screen
             mFullScreen = !fullScreen;

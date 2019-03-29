@@ -10,7 +10,7 @@
         android:id="@+id/videoSurfaceContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/blackBackground"
+        android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,6 +20,10 @@
             android:id="@+id/surfaceView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
